@@ -1,0 +1,256 @@
+<style>
+  #project-progress { display: flex; flex-direction: column; gap: 16px; }
+  #project-progress .status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    line-height: 1;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  #project-progress .status-done { color: var(--green); background: color-mix(in srgb, var(--green) 16%, transparent); }
+  #project-progress .status-todo { color: var(--orange); background: color-mix(in srgb, var(--orange) 16%, transparent); }
+  #project-progress .status-optional { color: var(--muted-foreground); background: color-mix(in srgb, var(--muted-foreground) 16%, transparent); }
+  #project-progress .task-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: var(--foreground);
+    text-align: left;
+  }
+  #project-progress .task-link[aria-pressed="true"] { color: var(--primary); font-weight: 500; }
+  #project-progress .task-num { color: var(--muted-foreground); font-variant-numeric: tabular-nums; margin-right: 8px; }
+</style>
+
+<div id="project-progress">
+  <div>
+    <h2 style="margin:0">Project progress</h2>
+    <p class="text-small text-muted" style="margin:2px 0 0">Knowledge base + RAG handoff</p>
+  </div>
+
+  <div class="viz-grid">
+    <div class="card viz-stat">
+      <span class="text-small text-muted">Completed</span>
+      <span class="viz-stat-value tabular-nums">1</span>
+      <span class="text-small text-muted">of 7 tasks</span>
+    </div>
+    <div class="card viz-stat">
+      <span class="text-small text-muted">To do</span>
+      <span class="viz-stat-value tabular-nums">5</span>
+      <span class="text-small text-muted">next: document upload</span>
+    </div>
+    <div class="card viz-stat">
+      <span class="text-small text-muted">Optional</span>
+      <span class="viz-stat-value tabular-nums">1</span>
+      <span class="text-small text-muted">map tab</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="progress" role="progressbar" aria-label="Project progress" aria-valuenow="14" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-bar" style="width:14%"></div>
+    </div>
+    <p class="text-small text-muted" style="margin:6px 0 0">1 of 7 complete. Verify each task with npm test, npx tsc --noEmit, and npm run lint.</p>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Status</th>
+          <th>Depends on</th>
+          <th>Adjust</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><button type="button" class="task-link cursor-interaction" data-task="1" aria-pressed="false"><span class="task-num">1</span>Source detail page <code>/sources/[id]</code></button></td>
+          <td><span class="status status-done">Done</span></td>
+          <td class="text-small text-muted">-</td>
+          <td class="text-small text-muted">Complete</td>
+        </tr>
+        <tr>
+          <td><button type="button" class="task-link cursor-interaction" data-task="2" aria-pressed="false"><span class="task-num">2</span>Document upload <code>.pdf .docx .txt .md</code></button></td>
+          <td><span class="status status-todo">To do</span></td>
+          <td class="text-small text-muted">-</td>
+          <td class="text-small text-muted">Extraction + skip transcription</td>
+        </tr>
+        <tr>
+          <td><button type="button" class="task-link cursor-interaction" data-task="3" aria-pressed="false"><span class="task-num">3</span>Chunk model</button></td>
+          <td><span class="status status-todo">To do</span></td>
+          <td class="text-small text-muted">-</td>
+          <td class="text-small text-muted">Embedding storage type</td>
+        </tr>
+        <tr>
+          <td><button type="button" class="task-link cursor-interaction" data-task="4" aria-pressed="false"><span class="task-num">4</span>Chunking + embeddings</button></td>
+          <td><span class="status status-todo">To do</span></td>
+          <td class="text-small text-muted">after #3</td>
+          <td class="text-small text-muted">Chunk size + provider</td>
+        </tr>
+        <tr>
+          <td><button type="button" class="task-link cursor-interaction" data-task="5" aria-pressed="false"><span class="task-num">5</span>Search API</button></td>
+          <td><span class="status status-todo">To do</span></td>
+          <td class="text-small text-muted">after #4</td>
+          <td class="text-small text-muted">top-N + tags</td>
+        </tr>
+        <tr>
+          <td><button type="button" class="task-link cursor-interaction" data-task="6" aria-pressed="false"><span class="task-num">6</span>Knowledge page (Search tab)</button></td>
+          <td><span class="status status-todo">To do</span></td>
+          <td class="text-small text-muted">after #5</td>
+          <td class="text-small text-muted">Match preview layout</td>
+        </tr>
+        <tr>
+          <td><button type="button" class="task-link cursor-interaction" data-task="7" aria-pressed="false"><span class="task-num">7</span>Map tab (UMAP or similar)</button></td>
+          <td><span class="status status-optional">Optional</span></td>
+          <td class="text-small text-muted">after #6</td>
+          <td class="text-small text-muted">Defer</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="padding:16px">
+    <div data-detail aria-live="polite">
+      <div class="viz-row" style="justify-content:space-between; align-items:center; margin-bottom:8px">
+        <h2 style="margin:0">2. Document upload (.pdf .docx .txt .md)</h2>
+        <span class="status status-todo">To do</span>
+      </div>
+      <p style="margin:0 0 10px">Add the new file types to ALLOWED_UPLOADS, extract text into sourceText on upload, keep the original file and SHA-256 check, and skip transcription.</p>
+      <div style="margin-bottom:10px">
+        <span class="text-small text-muted">Files</span>
+        <pre style="margin:4px 0 0"><code>src/lib/sources/storage.ts
+src/app/api/sources/route.ts</code></pre>
+      </div>
+      <div>
+        <span class="text-small text-muted">Where to adjust</span>
+        <ul style="margin:4px 0 0; padding-left:18px">
+          <li>Choose a text extractor for PDF and DOCX (or start with .txt/.md only).</li>
+          <li>Keep the SHA-256 immutability check; leave the original file untouched.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById("project-progress");
+    if (!root) return;
+
+    var tasks = [
+      { n: 1, title: "Source detail page /sources/[id]", status: "done", depends: null,
+        desc: "Show original info, transcript, analysis, and outputs by reusing the existing Prisma models.",
+        files: ["src/app/sources/[id]/page.tsx", "src/app/page.tsx"],
+        notes: ["Done: original info, transcript, analysis, and outputs render from the existing models."] },
+      { n: 2, title: "Document upload (.pdf .docx .txt .md)", status: "todo", depends: null,
+        desc: "Add the new file types to ALLOWED_UPLOADS, extract text into sourceText on upload, keep the original file and SHA-256 check, and skip transcription.",
+        files: ["src/lib/sources/storage.ts", "src/app/api/sources/route.ts"],
+        notes: ["Choose a text extractor for PDF and DOCX (or start with .txt/.md only).", "Keep the SHA-256 immutability check; leave the original file untouched."] },
+      { n: 3, title: "Chunk model", status: "todo", depends: null,
+        desc: "Add a Chunk model: sourceId, index, text, textEn, embedding (JSON string or Bytes), tags, speakerLabel, plus a migration.",
+        files: ["prisma/schema.prisma", "prisma/migrations/"],
+        notes: ["Decide embedding storage: JSON string vs Bytes.", "Add the relation and index to keep every chunk traceable to its Source."] },
+      { n: 4, title: "Chunking + embeddings", status: "todo", depends: 3,
+        desc: "Split source text into roughly 300-500 token chunks and embed with Gemini using the model name from config (not hard-coded), behind a small provider interface. Embed both Chinese and English.",
+        files: ["src/lib/knowledge/chunk.ts", "src/lib/knowledge/embed.ts", "src/lib/config.ts"],
+        notes: ["Pick the tokenizer/chunking strategy and bilingual handling.", "Keep the provider behind an interface so the model can change."] },
+      { n: 5, title: "Search API", status: "todo", depends: 4,
+        desc: "GET /api/knowledge/search with q and tags: compute cosine similarity in Node and return top-N chunks with source IDs. No vector DB.",
+        files: ["src/app/api/knowledge/search/route.ts"],
+        notes: ["Choose top-N size and a score threshold.", "Define tag filter semantics (AND vs OR) and keep source IDs in results."] },
+      { n: 6, title: "Knowledge page (Search tab)", status: "todo", depends: 5,
+        desc: "Build /knowledge with the Search tab ranked by score, speaker label, and source link, matching design/knowledge-preview.html. Keep light and dark themes.",
+        files: ["src/app/knowledge/page.tsx"],
+        notes: ["Reuse the search API and match the preview Search tab layout.", "No new UI libraries; keep both themes."] },
+      { n: 7, title: "Map tab (UMAP or similar)", status: "optional", depends: 6,
+        desc: "Add a 2D scatter of chunks colored by tag, projected with UMAP or a similar method. Optional and last.",
+        files: ["src/app/knowledge/page.tsx"],
+        notes: ["Choose UMAP in-browser vs precomputed coordinates.", "Can be deferred; the Search tab is the priority."] }
+    ];
+
+    var statusLabel = { done: "Done", todo: "To do", optional: "Optional" };
+    var links = root.querySelectorAll(".task-link");
+    var detail = root.querySelector("[data-detail]");
+    if (!detail) return;
+
+    var selected = 2;
+
+    function renderDetail(n) {
+      var task = null;
+      for (var i = 0; i < tasks.length; i++) if (tasks[i].n === n) task = tasks[i];
+      if (!task) return;
+
+      links.forEach(function (b) {
+        b.setAttribute("aria-pressed", String(Number(b.getAttribute("data-task")) === n));
+      });
+
+      var filesHtml = task.files.join("\n");
+      var notesHtml = task.notes.map(function (x) { return "    <li>" + x + "</li>"; }).join("\n");
+      var dependsHtml = task.depends
+        ? '<p class="text-small text-muted" style="margin:0 0 10px">Depends on: after #' + task.depends + '</p>'
+        : "";
+
+      detail.innerHTML =
+        '<div class="viz-row" style="justify-content:space-between; align-items:center; margin-bottom:8px">' +
+          '<h2 style="margin:0">' + task.n + '. ' + task.title + '</h2>' +
+          '<span class="status status-' + task.status + '">' + statusLabel[task.status] + '</span>' +
+        '</div>' +
+        '<p style="margin:0 0 10px">' + task.desc + '</p>' +
+        dependsHtml +
+        '<div style="margin-bottom:10px">' +
+          '<span class="text-small text-muted">Files</span>' +
+          '<pre style="margin:4px 0 0"><code>' + filesHtml + '</code></pre>' +
+        '</div>' +
+        '<div>' +
+          '<span class="text-small text-muted">Where to adjust</span>' +
+          '<ul style="margin:4px 0 0; padding-left:18px">' + notesHtml + '</ul>' +
+        '</div>';
+    }
+
+    function applySelection(n) {
+      var valid = tasks.some(function (t) { return t.n === n; });
+      selected = valid ? n : 2;
+      renderDetail(selected);
+    }
+
+    function persist() {
+      if (window.openai && typeof window.openai.setWidgetState === "function") {
+        window.openai.setWidgetState({ privateContent: JSON.stringify({ selected: selected }) }).catch(function () {});
+      }
+    }
+
+    links.forEach(function (b) {
+      b.addEventListener("click", function () {
+        applySelection(Number(b.getAttribute("data-task")));
+        persist();
+      });
+    });
+
+    var initial = 2;
+    try {
+      var saved = window.openai && window.openai.widgetState;
+      if (saved && saved.privateContent) {
+        var parsed = JSON.parse(saved.privateContent);
+        if (parsed && typeof parsed.selected === "number") initial = parsed.selected;
+      }
+    } catch (e) {}
+    applySelection(initial);
+
+    if (window.addEventListener) {
+      window.addEventListener("openai:set_globals", function (ev) {
+        try {
+          var g = ev && ev.detail && ev.detail.globals && ev.detail.globals.widgetState;
+          if (g && g.privateContent) {
+            var parsed = JSON.parse(g.privateContent);
+            if (parsed && typeof parsed.selected === "number") applySelection(parsed.selected);
+          }
+        } catch (e) {}
+      });
+    }
+  })();
+</script>

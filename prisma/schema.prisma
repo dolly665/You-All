@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Every original teacher material. The original file on disk is never modified.
+model Source {
+  id             String   @id @default(cuid())
+  title          String
+  originalPath   String?  // path under SOURCE_STORAGE_DIR; null for YouTube-link sources
+  originalSha256 String?  // checked before and after processing to prove the original is unchanged
+  sourceUrl      String?  // YouTube URL for link-based sources
+  sourceText     String?  // English source article supplied directly; skips transcription
+  mimeType       String
+  sizeBytes      Int
+  tags           String   @default("[]") // JSON array of strings; taxonomy is intentionally flexible
+  // UPLOADED → TRANSCRIBING → TRANSCRIBED → ANALYZED → GENERATED, or FAILED with errorMessage
+  processingStatus String  @default("UPLOADED")
+  errorMessage     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  transcript Transcript?
+  analysis   Analysis?
+  outputs    ContentOutput[]
+}
+
+model Transcript {
+  id        String   @id @default(cuid())
+  sourceId  String   @unique
+  source    Source   @relation(fields: [sourceId], references: [id])
+  language  String   // e.g. "zh"
+  text        String  // original Chinese transcript
+  englishText String  // faithful English translation of the full transcript
+  segments  String   @default("[]") // JSON array of { start, end, text }
+  model     String   // transcription model used, for traceability
+  createdAt DateTime @default(now())
+}
+
+model Analysis {
+  id            String   @id @default(cuid())
+  sourceId      String   @unique
+  source        Source   @relation(fields: [sourceId], references: [id])
+  data          String   // JSON, validated against the analysis schema before saving
+  promptVersion String
+  model         String
+  createdAt     DateTime @default(now())
+}
+
+// One platform output derived from a Source. Publication copies may be redacted; the Source is never changed.
+model ContentOutput {
+  id            String    @id @default(cuid())
+  sourceId      String
+  source        Source    @relation(fields: [sourceId], references: [id])
+  platform      String    // YOUTUBE | TIKTOK | SUBSTACK | MEDIUM
+  sequence      Int       @default(1) // for TIKTOK shorts: 1..N
+  title         String
+  body          String
+  // DRAFT → REVIEW → APPROVED → PUBLISHED. Publishing requires a human approval step.
+  status        String    @default("DRAFT")
+  privacyFlags  String    @default("[]") // JSON array; non-empty means human review is required
+  promptVersion String
+  model         String
+  approvedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([sourceId])
+}
